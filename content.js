@@ -65,8 +65,9 @@
 
   // ─── Hide tooltip ────────────────────────────────────────────────────────
   function hideTooltip() {
+    if (!tooltip) return; // tooltip not created yet
     hideTimer = setTimeout(() => {
-      tooltip.classList.remove('visible');
+      tooltip?.classList.remove('visible'); // optional chain in case tooltip is gone
     }, 150);
   }
 
@@ -162,7 +163,7 @@
         ${label}
       </div>
     `;
-    setTimeout(() => tooltip.classList.remove('visible'), 1500);
+    setTimeout(() => tooltip?.classList.remove('visible'), 1500);
   }
 
   // ─── Save word via background script ────────────────────────────────────
@@ -194,7 +195,7 @@
     const word = selection?.toString().trim();
 
     if (!word || word.length < 2 || word.length > 100) {
-      hideTooltip();
+      if (tooltip) hideTooltip(); // only hide if tooltip was already created
       return;
     }
 
