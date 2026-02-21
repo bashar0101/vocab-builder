@@ -4,12 +4,33 @@ let allWords = [];
 let currentTab = 'learn';
 let searchQuery = '';
 let selectedWord = null;
+let isDark = true; // default dark
 
 // ── Init ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  await loadTheme();
   await loadWords();
   setupEventListeners();
 });
+
+// ── Load & apply saved theme ─────────────────────────────────────────────
+async function loadTheme() {
+  const result = await chrome.storage.local.get(['vocab_theme']);
+  isDark = result.vocab_theme !== 'light'; // default dark
+  applyTheme();
+}
+
+function applyTheme() {
+  document.body.classList.toggle('light', !isDark);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = isDark ? '🌙' : '☀️';
+}
+
+async function toggleTheme() {
+  isDark = !isDark;
+  applyTheme();
+  await chrome.storage.local.set({ vocab_theme: isDark ? 'dark' : 'light' });
+}
 
 // ── Load words from storage ───────────────────────────────────────────────
 async function loadWords() {
@@ -24,6 +45,9 @@ async function loadWords() {
 
 // ── Event Listeners ───────────────────────────────────────────────────────
 function setupEventListeners() {
+  // Theme toggle
+  document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
   // Tab switching
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {

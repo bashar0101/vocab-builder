@@ -7,6 +7,20 @@
   let tooltip = null;
   let currentWord = '';
   let hideTimer = null;
+  let isLightMode = false;
+
+  // Load theme preference from storage
+  chrome.storage.local.get(['vocab_theme'], (result) => {
+    isLightMode = result.vocab_theme === 'light';
+  });
+
+  // Keep theme in sync if popup changes it
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.vocab_theme) {
+      isLightMode = changes.vocab_theme.newValue === 'light';
+      if (tooltip) tooltip.classList.toggle('light-mode', isLightMode);
+    }
+  });
 
   // ─── Build tooltip DOM ───────────────────────────────────────────────────
   function createTooltip() {
@@ -31,6 +45,8 @@
   // ─── Show tooltip at position ────────────────────────────────────────────
   function showTooltip(x, y) {
     clearTimeout(hideTimer);
+    // Apply current theme
+    tooltip.classList.toggle('light-mode', isLightMode);
     tooltip.classList.add('visible');
 
     // Keep within viewport

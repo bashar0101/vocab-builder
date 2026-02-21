@@ -3,6 +3,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Dark theme (default) ── */
 :root {
   --bg-primary: #0f1117;
   --bg-card: #1a1f2e;
@@ -15,7 +16,28 @@
   --text-secondary: #8896b3;
   --text-muted: #4a5568;
   --border: rgba(255,255,255,0.07);
+  --shadow: 0 2px 12px rgba(0,0,0,0.35);
+  --modal-overlay-bg: rgba(0,0,0,0.6);
+  --modal-desc-bg: rgba(255,255,255,0.05);
   --radius: 10px;
+}
+
+/* ── Light theme ── */
+body.light {
+  --bg-primary: #f5f6fa;
+  --bg-card: #ffffff;
+  --bg-hover: #eef0f8;
+  --accent-blue: #3b7de8;
+  --accent-blue-dim: rgba(59, 125, 232, 0.1);
+  --accent-green: #2f9e5c;
+  --accent-green-dim: rgba(47, 158, 92, 0.1);
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --modal-overlay-bg: rgba(0,0,0,0.3);
+  --modal-desc-bg: rgba(0,0,0,0.03);
 }
 
 html, body {
@@ -28,6 +50,7 @@ html, body {
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.5;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 .app {
@@ -64,6 +87,12 @@ html, body {
   letter-spacing: -0.3px;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .word-count {
   font-size: 12px;
   color: var(--text-muted);
@@ -72,6 +101,28 @@ html, body {
   padding: 3px 10px;
   border-radius: 20px;
   border: 1px solid var(--border);
+}
+
+/* ── Theme Toggle ── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-blue);
+  transform: rotate(15deg) scale(1.08);
 }
 
 /* ── Search ── */
@@ -84,11 +135,11 @@ html, body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 8px 12px;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, background 0.25s;
 }
 
 .search-bar:focus-within {
-  border-color: rgba(79, 142, 247, 0.35);
+  border-color: rgba(79, 142, 247, 0.4);
 }
 
 .search-icon {
@@ -118,6 +169,7 @@ html, body {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   padding: 3px;
+  transition: background 0.25s;
 }
 
 .tab {
@@ -141,6 +193,7 @@ html, body {
 .tab.active {
   background: var(--bg-hover);
   color: var(--text-primary);
+  box-shadow: var(--shadow);
 }
 
 .tab-badge {
@@ -185,11 +238,12 @@ html, body {
   cursor: pointer;
   transition: all 0.15s;
   margin-bottom: 6px;
+  box-shadow: var(--shadow);
 }
 
 .word-card:hover {
   background: var(--bg-hover);
-  border-color: rgba(79, 142, 247, 0.2);
+  border-color: rgba(79, 142, 247, 0.25);
   transform: translateY(-1px);
 }
 
@@ -284,8 +338,8 @@ html, body {
 }
 
 .clear-btn:hover {
-  color: #fc8181;
-  background: rgba(252, 129, 129, 0.1);
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* ── Modal ── */
@@ -293,7 +347,7 @@ html, body {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: var(--modal-overlay-bg);
   backdrop-filter: blur(4px);
   z-index: 1000;
   align-items: center;
@@ -306,12 +360,13 @@ html, body {
 
 .modal {
   background: var(--bg-card);
-  border: 1px solid rgba(79, 142, 247, 0.2);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 24px;
   width: 340px;
   position: relative;
   animation: modal-in 0.2s ease;
+  box-shadow: var(--shadow);
 }
 
 @keyframes modal-in {
@@ -352,12 +407,13 @@ html, body {
 .modal-description {
   font-size: 13px;
   color: var(--text-secondary);
-  background: rgba(255,255,255,0.05);
+  background: var(--modal-desc-bg);
   border-radius: 8px;
   padding: 10px 12px;
   line-height: 1.6;
   margin-bottom: 12px;
   display: none;
+  border: 1px solid var(--border);
 }
 
 .modal-description.visible { display: block; }
@@ -398,12 +454,12 @@ html, body {
   border: 1px solid rgba(79, 142, 247, 0.2);
 }
 
-.modal-btn-move:hover { background: rgba(79, 142, 247, 0.2); }
+.modal-btn-move:hover { background: rgba(79, 142, 247, 0.22); }
 
 .modal-btn-delete {
-  background: rgba(252, 129, 129, 0.1);
-  color: #fc8181;
-  border: 1px solid rgba(252, 129, 129, 0.15);
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.15);
 }
 
-.modal-btn-delete:hover { background: rgba(252, 129, 129, 0.2); }
+.modal-btn-delete:hover { background: rgba(239, 68, 68, 0.16); }
