@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "VocabBuilder",
+  "version": "1.0.0",
+  "description": "Save and learn new vocabulary words as you browse. Select any word to save it as 'Learning' with a translation, or mark it as 'Known'.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "*://*.translate.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "VocabBuilder",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles/tooltip.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

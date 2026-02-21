@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VocabBuilder</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="url(#grad)"/>
+          <path d="M8 10h10M8 14h8M8 18h6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="22" cy="13" r="5" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1.5"/>
+          <path d="M22 10.5v2.5l1.5 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32">
+              <stop offset="0%" stop-color="#4f8ef7"/>
+              <stop offset="100%" stop-color="#2d5fcf"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="logo-text">VocabBuilder</span>
+      </div>
+      <div class="word-count" id="word-count">0 words</div>
+    </header>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none">
+        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zm8 2-4.35-4.35" stroke="#6b7280" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input type="text" id="search-input" class="search-input" placeholder="Search words…" />
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="learn" id="tab-learn">
+        📚 Learning
+        <span class="tab-badge" id="badge-learn">0</span>
+      </button>
+      <button class="tab" data-tab="know" id="tab-know">
+        ✓ Known
+        <span class="tab-badge" id="badge-know">0</span>
+      </button>
+    </div>
+
+    <!-- Word list -->
+    <div class="word-list" id="word-list">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">📖</div>
+        <p class="empty-title">No words yet</p>
+        <p class="empty-desc">Select any word on a webpage<br/>to start building your vocabulary</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <button class="clear-btn" id="clear-btn">Clear all words</button>
+    </footer>
+  </div>
+
+  <!-- Word detail modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div class="modal-word" id="modal-word"></div>
+      <div class="modal-translation" id="modal-translation"></div>
+      <div class="modal-description" id="modal-description"></div>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-move" id="modal-move-btn"></button>
+        <button class="modal-btn modal-btn-delete" id="modal-delete-btn">🗑 Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

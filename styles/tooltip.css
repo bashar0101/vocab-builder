@@ -1,0 +1,186 @@
+/* styles/tooltip.css - Injected into web pages for the selection tooltip */
+
+#vocabbuilder-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.28));
+}
+
+#vocabbuilder-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+#vocabbuilder-tooltip .vb-card {
+  background: linear-gradient(135deg, #1a1f36 0%, #16213e 100%);
+  border: 1px solid rgba(79, 142, 247, 0.3);
+  border-radius: 14px;
+  padding: 14px 16px;
+  min-width: 240px;
+  max-width: 320px;
+  color: #e8eaf6;
+}
+
+#vocabbuilder-tooltip .vb-word {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+  margin-bottom: 8px;
+}
+
+#vocabbuilder-tooltip .vb-translation-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+#vocabbuilder-tooltip .vb-translation {
+  font-size: 14px;
+  color: #4f8ef7;
+  font-weight: 500;
+  flex: 1;
+}
+
+#vocabbuilder-tooltip .vb-lang-badge {
+  font-size: 10px;
+  background: rgba(79, 142, 247, 0.15);
+  color: #6aaeff;
+  border-radius: 4px;
+  padding: 2px 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+#vocabbuilder-tooltip .vb-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8896b3;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+#vocabbuilder-tooltip .vb-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(79, 142, 247, 0.3);
+  border-top-color: #4f8ef7;
+  border-radius: 50%;
+  animation: vb-spin 0.6s linear infinite;
+}
+
+@keyframes vb-spin {
+  to { transform: rotate(360deg); }
+}
+
+#vocabbuilder-tooltip .vb-description-area {
+  margin-bottom: 10px;
+}
+
+#vocabbuilder-tooltip .vb-description-input {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(79, 142, 247, 0.2);
+  border-radius: 8px;
+  color: #e8eaf6;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 7px 10px;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+  line-height: 1.4;
+  min-height: 56px;
+}
+
+#vocabbuilder-tooltip .vb-description-input::placeholder {
+  color: #4a5568;
+}
+
+#vocabbuilder-tooltip .vb-description-input:focus {
+  border-color: rgba(79, 142, 247, 0.5);
+  background: rgba(255,255,255,0.09);
+}
+
+#vocabbuilder-tooltip .vb-actions {
+  display: flex;
+  gap: 8px;
+}
+
+#vocabbuilder-tooltip .vb-btn {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.3px;
+}
+
+#vocabbuilder-tooltip .vb-btn-learn {
+  background: linear-gradient(135deg, #4f8ef7, #3b7de8);
+  color: white;
+  box-shadow: 0 2px 8px rgba(79, 142, 247, 0.35);
+}
+
+#vocabbuilder-tooltip .vb-btn-learn:hover {
+  background: linear-gradient(135deg, #5a97ff, #4f8ef7);
+  box-shadow: 0 4px 14px rgba(79, 142, 247, 0.5);
+  transform: translateY(-1px);
+}
+
+#vocabbuilder-tooltip .vb-btn-know {
+  background: rgba(255,255,255,0.08);
+  color: #a0aec0;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+#vocabbuilder-tooltip .vb-btn-know:hover {
+  background: rgba(255,255,255,0.14);
+  color: #e8eaf6;
+  border-color: rgba(255,255,255,0.2);
+}
+
+#vocabbuilder-tooltip .vb-btn-dismiss {
+  width: 28px;
+  flex: none;
+  background: rgba(255,255,255,0.05);
+  color: #4a5568;
+  border: 1px solid rgba(255,255,255,0.07);
+  font-size: 14px;
+}
+
+#vocabbuilder-tooltip .vb-btn-dismiss:hover {
+  background: rgba(255,255,255,0.1);
+  color: #8896b3;
+}
+
+#vocabbuilder-tooltip .vb-saved-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #48bb78;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 0;
+  justify-content: center;
+}
+
+#vocabbuilder-tooltip .vb-saved-indicator svg {
+  width: 16px;
+  height: 16px;
+}
