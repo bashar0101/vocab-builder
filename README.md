@@ -20,10 +20,6 @@ A Chrome browser extension that helps you learn new vocabulary as you browse the
 - **Word detail modal** — view full info, move between tabs, or delete
 - **Relative timestamps** — see when each word was saved
 
-### 🌙 / ☀️ Dark & Light Mode
-- Toggle between dark and light themes with one click
-- Theme preference is saved and persists across sessions
-- The in-page tooltip matches your chosen theme
 
 ### 🔒 100% Private
 - All data stored locally using `chrome.storage.local`
