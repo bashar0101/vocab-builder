@@ -1,5 +1,12 @@
-// background.js - Service Worker for VocabBuilder Extension
-// Handles translation API calls (bypasses CORS restrictions)
+/**
+ * background.js
+ * 
+ * Extension service worker.
+ * Handles:
+ * 1. Proxying translation API requests to bypass CORS restrictions.
+ * 2. Synchronous/Asynchronous state persistence in chrome.storage.
+ * 3. Centralized messaging bus for content scripts and popup dashboard.
+ */
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'TRANSLATE') {
@@ -44,18 +51,27 @@ async function translateWord(word, targetLang = 'ar') {
   return { translation, detectedLang };
 }
 
+/**
+ * Persistence: Saves a word object to the local list.
+ */
 async function saveWord(wordData) {
   const result = await chrome.storage.local.get(['vocab_words']);
   const words = result.vocab_words || [];
-  words.unshift(wordData); // Add to beginning
+  words.unshift(wordData); // Always add to the top (most recent)
   await chrome.storage.local.set({ vocab_words: words });
 }
 
+/**
+ * Persistence: Retrieves the full collection of saved words.
+ */
 async function getWords() {
   const result = await chrome.storage.local.get(['vocab_words']);
   return result.vocab_words || [];
 }
 
+/**
+ * Persistence: Deletes a specific word entry by unique ID.
+ */
 async function deleteWord(wordId) {
   const result = await chrome.storage.local.get(['vocab_words']);
   const words = (result.vocab_words || []).filter(w => w.id !== wordId);

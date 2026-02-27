@@ -9,6 +9,7 @@ A Chrome browser extension that helps you learn new vocabulary as you browse the
 ### 🖱️ In-Page Word Tooltip
 - **Select any word or phrase** on any webpage to trigger the tooltip
 - **Auto-translation** via Google Translate (auto-detects source language)
+- **🌐 Target Language** — choose your preferred translation language in the dashboard
 - **📚 Learn** — saves the word with its translation and your optional notes
 - **✓ Know** — marks the word as already known (no translation stored)
 - **Dismiss** — closes the tooltip without saving
@@ -16,9 +17,11 @@ A Chrome browser extension that helps you learn new vocabulary as you browse the
 ### 📋 Vocabulary Dashboard (Popup)
 - **Learning tab** — words you're actively studying, with translations
 - **Known tab** — words you've already mastered
+- **🌍 Language Filters** — filter your list by the original language (e.g. English, Turkish)
 - **Search** — filter your list by word, translation, or description
 - **Word detail modal** — view full info, move between tabs, or delete
-- **Relative timestamps** — see when each word was saved
+- **Theme toggle** — switch between sleek Dark and Light modes
+- **Relative timestamps** — see when each word was saved (e.g. 5m ago)
 
 
 ### 🔒 100% Private
@@ -32,18 +35,14 @@ A Chrome browser extension that helps you learn new vocabulary as you browse the
 ```
 vocab-builder/
 ├── manifest.json          # Extension config (Manifest V3)
-├── background.js          # Service worker — translation API & storage
-├── content.js             # Text selection detection + tooltip UI
-├── popup.html             # Vocabulary dashboard markup
-├── popup.css              # Dark/light theme styles
-├── popup.js               # Dashboard logic (tabs, search, modal)
-├── generate_icons.py      # Script to regenerate PNG icons
-├── icons/
-│   ├── icon16.png
-│   ├── icon48.png
-│   └── icon128.png
+├── background.js          # Service worker — translation API & storage proxy
+├── content.js             # Text selection detection & tooltip orchestration
+├── popup.html             # Dashboard markup
+├── popup.css              # Dashboard & modal styles
+├── popup.js               # Dashboard & modal logic
+├── icons/                 # Extension icons (16, 48, 128px)
 └── styles/
-    └── tooltip.css        # In-page tooltip styles (dark + light)
+    └── tooltip.css        # In-page tooltip styles (Dark & Light themes)
 ```
 
 ---
@@ -78,24 +77,15 @@ Each saved word is stored as:
 
 ---
 
-## 🛠️ How to Use
-
-1. **Visit any webpage** (e.g. Wikipedia, news sites, articles)
-2. **Select a word** by clicking and dragging over it
-3. A tooltip appears with the **translation** and two options:
-   - Click **📚 Learn** — optionally add a personal note, then save
-   - Click **✓ Know** — save it as a word you already know
-4. Click the **extension icon** to open your dashboard and review your words
-
----
-
-## 🔧 Regenerating Icons
-
-Icons are generated with Python (no third-party libraries needed):
-
-```bash
-python generate_icons.py
-```
+1. **Install the extension** (see above)
+2. **Visit any webpage** (e.g. Wikipedia, articles, news)
+3. **Select a word** by clicking and dragging over it
+4. Use the **tooltip** to save the word to your "Learning" or "Known" list
+5. Open the **dashboard** (extension icon) to:
+   - Change your **target language** (in the footer)
+   - Toggle **Light/Dark mode** (in the header)
+   - **Filter** words by language or text
+   - Review word **details** by clicking cards
 
 ---
 

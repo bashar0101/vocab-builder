@@ -1,22 +1,34 @@
-// content.js - VocabBuilder content script
-// Detects text selection and shows the translate & save tooltip
+/**
+ * content.js
+ * 
+ * Core content script for the VocabBuilder extension.
+ * Responsibilities:
+ * 1. Monitior user text selection.
+ * 2. Position and display a floating translation tooltip.
+ * 3. Fetch translations via background service worker.
+ * 4. Coordinate saving words to chrome.storage.
+ * 5. Sync theme (dark/light) and target language preferences.
+ */
 
 (function () {
   'use strict';
 
-  let tooltip = null;
-  let currentWord = '';
-  let hideTimer = null;
-  let targetLang = 'ar'; // Default to Arabic as requested
-  let isLightMode = false;
+  // --- STATE ---
+  let tooltip = null;        // Tooltip DOM element
+  let currentWord = '';      // Last selected word to prevent duplicate triggers
+  let hideTimer = null;      // Timer for smooth tooltip dismissal
+  let targetLang = 'ar';     // Default target language (Fallback: Arabic)
+  let isLightMode = false;   // Theme state
 
-  // Load preferences from storage
+  // --- INITIALIZATION ---
+
+  // Load user preferences from persistent storage
   chrome.storage.local.get(['vocab_theme', 'vocab_lang'], (result) => {
     isLightMode = result.vocab_theme === 'light';
     if (result.vocab_lang) targetLang = result.vocab_lang;
   });
 
-  // Keep preferences in sync if popup changes them
+  // Dynamically update state and UI when preferences change in the popup
   chrome.storage.onChanged.addListener((changes) => {
     if (changes.vocab_theme) {
       isLightMode = changes.vocab_theme.newValue === 'light';
@@ -27,7 +39,7 @@
     }
   });
 
-  // ─── Build tooltip DOM ───────────────────────────────────────────────────
+  // --- UI CONSTRUCTION ---
   function createTooltip() {
     if (document.getElementById('vocabbuilder-tooltip')) return;
 
@@ -47,36 +59,46 @@
     document.body.appendChild(tooltip);
   }
 
-  // ─── Show tooltip at position ────────────────────────────────────────────
+  /**
+   * Positions and shows the tooltip relative to mouse coordinates.
+   * Includes boundary checks to keep the tooltip within the viewport.
+   */
   function showTooltip(x, y) {
     clearTimeout(hideTimer);
-    // Apply current theme
+    
+    // Ensure theme is applied before showing
     tooltip.classList.toggle('light-mode', isLightMode);
     tooltip.classList.add('visible');
 
-    // Keep within viewport
+    // Calculate position with viewport boundary checks
     const margin = 12;
-    const rect = tooltip.getBoundingClientRect();
     let left = x;
-    let top = y + 14;
+    let top = y + 14; // Default: Offset slightly below cursor
 
+    // Stay within horizontal bounds
     if (left + 300 > window.innerWidth) left = window.innerWidth - 300 - margin;
     if (left < margin) left = margin;
+
+    // Stay within vertical bounds (flip above cursor if too low)
     if (top + 200 > window.innerHeight) top = y - 200 - 10;
 
-    tooltip.style.left = left + 'px';
-    tooltip.style.top = top + 'px';
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
   }
 
-  // ─── Hide tooltip ────────────────────────────────────────────────────────
+  /**
+   * Hides the tooltip with a slight delay for better UX.
+   */
   function hideTooltip() {
-    if (!tooltip) return; // tooltip not created yet
+    if (!tooltip) return;
     hideTimer = setTimeout(() => {
-      tooltip?.classList.remove('visible'); // optional chain in case tooltip is gone
+      tooltip?.classList.remove('visible');
     }, 150);
   }
 
-  // ─── Render loading state ────────────────────────────────────────────────
+  /**
+   * Renders the loading spinner.
+   */
   function renderLoading(word) {
     document.getElementById('vb-word-text').textContent = word;
     document.getElementById('vb-body').innerHTML = `
@@ -87,7 +109,9 @@
     `;
   }
 
-  // ─── Render translated state with save buttons ───────────────────────────
+  /**
+   * Renders the successful translation view with save buttons.
+   */
   function renderTranslated(word, translation, detectedLang) {
     const showTranslation = translation && translation !== word;
 
@@ -113,6 +137,7 @@
       </div>
     `;
 
+    // Event Handlers for UI Buttons
     document.getElementById('vb-btn-learn').addEventListener('click', () => {
       const description = document.getElementById('vb-desc-input').value.trim();
       saveWord(word, 'learn', showTranslation ? translation : '', description, detectedLang);
@@ -126,11 +151,13 @@
       tooltip.classList.remove('visible');
     });
 
-    // Prevent tooltip from hiding when interacting with textarea
+    // Stop propagation on textarea to allow interaction (typing/clicking) without closing tooltip
     document.getElementById('vb-desc-input').addEventListener('mousedown', e => e.stopPropagation());
   }
 
-  // ─── Render error state ──────────────────────────────────────────────────
+  /**
+   * Renders a simplified error view if translation fails.
+   */
   function renderError(word) {
     document.getElementById('vb-body').innerHTML = `
       <div class="vb-description-area">
@@ -156,7 +183,9 @@
     document.getElementById('vb-btn-dismiss').addEventListener('click', () => tooltip.classList.remove('visible'));
   }
 
-  // ─── Render saved confirmation ───────────────────────────────────────────
+  /**
+   * Renders a temporary success indicator after saving.
+   */
   function renderSaved(status) {
     const label = status === 'learn' ? 'Added to Learning List!' : 'Marked as Known!';
     document.getElementById('vb-body').innerHTML = `
@@ -170,7 +199,7 @@
     setTimeout(() => tooltip?.classList.remove('visible'), 1500);
   }
 
-  // ─── Save word via background script ────────────────────────────────────
+  // --- DATA OPERATIONS ---
   function saveWord(word, status, translation, description, sourceLang) {
     const wordData = {
       id: Date.now().toString(),

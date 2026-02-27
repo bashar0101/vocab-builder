@@ -1,13 +1,23 @@
-// popup.js - VocabBuilder Dashboard Logic
+/**
+ * popup.js
+ * 
+ * Dashboard logic for the VocabBuilder extension.
+ * Responsibilities:
+ * 1. Fetch saved vocabulary from persistent storage.
+ * 2. Manage UI state (Active tab, search query, language filters).
+ * 3. Render word lists and detail modals.
+ * 4. Perform data operations (Move, delete, clear all).
+ */
 
-let allWords = [];
-let currentTab = 'learn';
-let searchQuery = '';
-let selectedWord = null;
-let isDark = true; // default dark
-let currentLangFilter = 'all';
+// --- GLOBAL STATE ---
+let allWords = [];           // Cache for all saved words
+let currentTab = 'learn';    // 'learn' or 'know'
+let searchQuery = '';        // Current search filter
+let selectedWord = null;     // Word currently being viewed in modal
+let isDark = true;           // Theme preference (default: Dark)
+let currentLangFilter = 'all'; // Language filtering state (default: All)
 
-// ── Init ──────────────────────────────────────────────────────────────────
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', async () => {
   await loadTheme();
   await loadLang();
@@ -53,17 +63,19 @@ async function loadWords() {
   renderAll();
 }
 
-// ── Event Listeners ───────────────────────────────────────────────────────
+/**
+ * Core event listener setup for interactive elements.
+ */
 function setupEventListeners() {
-  // Theme toggle
+  // Theme management
   document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
-  // Language selector
+  // Persistence: Target language selection
   document.getElementById('lang-select').addEventListener('change', async (e) => {
     await chrome.storage.local.set({ vocab_lang: e.target.value });
   });
 
-  // Tab switching
+  // UI: Tab navigation
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -73,13 +85,13 @@ function setupEventListeners() {
     });
   });
 
-  // Search
+  // UI: Real-time search
   document.getElementById('search-input').addEventListener('input', (e) => {
     searchQuery = e.target.value.trim().toLowerCase();
     renderWordList();
   });
 
-  // Clear all button
+  // Data: Bulk deletion
   document.getElementById('clear-btn').addEventListener('click', async () => {
     if (!confirm('Clear all saved words? This cannot be undone.')) return;
     allWords = [];
@@ -87,13 +99,13 @@ function setupEventListeners() {
     renderAll();
   });
 
-  // Modal close
+  // Modal: Interaction & Dismissal
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('modal-overlay').addEventListener('click', (e) => {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
   });
 
-  // Modal move word button
+  // Modal: Update status (Learn <-> Know)
   document.getElementById('modal-move-btn').addEventListener('click', async () => {
     if (!selectedWord) return;
     const newStatus = selectedWord.status === 'learn' ? 'know' : 'learn';
@@ -107,7 +119,7 @@ function setupEventListeners() {
     }
   });
 
-  // Modal delete button
+  // Modal: Individual deletion
   document.getElementById('modal-delete-btn').addEventListener('click', async () => {
     if (!selectedWord) return;
     if (!confirm(`Delete "${selectedWord.original}"?`)) return;
@@ -117,6 +129,8 @@ function setupEventListeners() {
     renderAll();
   });
 }
+
+// --- RENDERING PIPELINE ---
 
 // ── Render everything ─────────────────────────────────────────────────────
 function renderAll() {
