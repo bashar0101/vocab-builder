@@ -5,6 +5,7 @@ let currentTab = 'learn';
 let searchQuery = '';
 let selectedWord = null;
 let isDark = true; // default dark
+let currentLangFilter = 'all';
 
 // ── Init ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
@@ -126,7 +127,30 @@ function renderAll() {
   document.getElementById('badge-know').textContent = knowCount;
   document.getElementById('word-count').textContent = `${allWords.length} word${allWords.length !== 1 ? 's' : ''}`;
 
+  renderLanguageFilters();
   renderWordList();
+}
+
+// ── Render language filter chips ──────────────────────────────────────────
+function renderLanguageFilters() {
+  const container = document.getElementById('lang-filters');
+  if (!container) return;
+
+  // Get unique source languages from all words
+  const languages = ['all', ...new Set(allWords.map(w => w.sourceLang || 'unknown'))];
+
+  container.innerHTML = '';
+  languages.forEach(lang => {
+    const chip = document.createElement('div');
+    chip.className = `lang-chip ${currentLangFilter === lang ? 'active' : ''}`;
+    chip.textContent = lang === 'all' ? 'All Languages' : lang;
+    chip.addEventListener('click', () => {
+      currentLangFilter = lang;
+      renderLanguageFilters();
+      renderWordList();
+    });
+    container.appendChild(chip);
+  });
 }
 
 // ── Render filtered word list ─────────────────────────────────────────────
@@ -136,6 +160,10 @@ function renderWordList() {
 
   const filtered = allWords
     .filter(w => w.status === currentTab)
+    .filter(w => {
+      if (currentLangFilter === 'all') return true;
+      return (w.sourceLang || 'unknown') === currentLangFilter;
+    })
     .filter(w => {
       if (!searchQuery) return true;
       return (
@@ -167,11 +195,7 @@ function renderWordList() {
     card.dataset.status = word.status;
     card.dataset.id = word.id;
 
-    const subtitle = word.translation
-      ? word.translation
-      : word.description
-        ? word.description
-        : formatDate(word.timestamp);
+    const subtitle = word.translation || word.description || formatDate(word.timestamp);
 
     card.innerHTML = `
       <div class="wc-status-dot"></div>

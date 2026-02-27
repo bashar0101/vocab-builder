@@ -115,11 +115,11 @@
 
     document.getElementById('vb-btn-learn').addEventListener('click', () => {
       const description = document.getElementById('vb-desc-input').value.trim();
-      saveWord(word, 'learn', showTranslation ? translation : '', description);
+      saveWord(word, 'learn', showTranslation ? translation : '', description, detectedLang);
     });
 
     document.getElementById('vb-btn-know').addEventListener('click', () => {
-      saveWord(word, 'know', '', '');
+      saveWord(word, 'know', '', '', detectedLang);
     });
 
     document.getElementById('vb-btn-dismiss').addEventListener('click', () => {
@@ -171,13 +171,14 @@
   }
 
   // ─── Save word via background script ────────────────────────────────────
-  function saveWord(word, status, translation, description) {
+  function saveWord(word, status, translation, description, sourceLang) {
     const wordData = {
       id: Date.now().toString(),
       original: word,
       translation: translation || '',
       description: description || '',
       status,
+      sourceLang: sourceLang || 'unknown',
       timestamp: Date.now(),
       sourceUrl: window.location.href,
       sourceDomain: window.location.hostname,
