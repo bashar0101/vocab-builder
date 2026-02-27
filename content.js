@@ -7,18 +7,23 @@
   let tooltip = null;
   let currentWord = '';
   let hideTimer = null;
+  let targetLang = 'ar'; // Default to Arabic as requested
   let isLightMode = false;
 
-  // Load theme preference from storage
-  chrome.storage.local.get(['vocab_theme'], (result) => {
+  // Load preferences from storage
+  chrome.storage.local.get(['vocab_theme', 'vocab_lang'], (result) => {
     isLightMode = result.vocab_theme === 'light';
+    if (result.vocab_lang) targetLang = result.vocab_lang;
   });
 
-  // Keep theme in sync if popup changes it
+  // Keep preferences in sync if popup changes them
   chrome.storage.onChanged.addListener((changes) => {
     if (changes.vocab_theme) {
       isLightMode = changes.vocab_theme.newValue === 'light';
       if (tooltip) tooltip.classList.toggle('light-mode', isLightMode);
+    }
+    if (changes.vocab_lang) {
+      targetLang = changes.vocab_lang.newValue;
     }
   });
 
@@ -84,7 +89,6 @@
 
   // ─── Render translated state with save buttons ───────────────────────────
   function renderTranslated(word, translation, detectedLang) {
-    const targetLang = chrome.i18n.getUILanguage().split('-')[0];
     const showTranslation = translation && translation !== word;
 
     document.getElementById('vb-body').innerHTML = `
@@ -207,8 +211,8 @@
     renderLoading(word);
     showTooltip(e.clientX, e.clientY);
 
-    // Get user interface language for translation target
-    const targetLang = chrome.i18n.getUILanguage().split('-')[0];
+    // Use the stored target language for translation
+    console.log(`[VocabBuilder] Translating "${word}" to "${targetLang}"`);
 
     try {
       const response = await chrome.runtime.sendMessage({

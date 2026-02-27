@@ -9,6 +9,7 @@ let isDark = true; // default dark
 // ── Init ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   await loadTheme();
+  await loadLang();
   await loadWords();
   setupEventListeners();
 });
@@ -32,6 +33,14 @@ async function toggleTheme() {
   await chrome.storage.local.set({ vocab_theme: isDark ? 'dark' : 'light' });
 }
 
+// ── Load & apply saved language ───────────────────────────────────────────
+async function loadLang() {
+  const result = await chrome.storage.local.get(['vocab_lang']);
+  const savedLang = result.vocab_lang || 'ar'; // default Arabic
+  const select = document.getElementById('lang-select');
+  if (select) select.value = savedLang;
+}
+
 // ── Load words from storage ───────────────────────────────────────────────
 async function loadWords() {
   try {
@@ -47,6 +56,11 @@ async function loadWords() {
 function setupEventListeners() {
   // Theme toggle
   document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+  // Language selector
+  document.getElementById('lang-select').addEventListener('change', async (e) => {
+    await chrome.storage.local.set({ vocab_lang: e.target.value });
+  });
 
   // Tab switching
   document.querySelectorAll('.tab').forEach(tab => {
